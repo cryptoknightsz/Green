@@ -26,8 +26,10 @@ jobs:
           echo $d > LAST_UPDATED
           
       - name: Commit changes
+        env:
+          EMAIL: ${{ secrets.USER_EMAIL }}
         run: |
-          git config --local user.email "sushant05000@gmail.com"
+          git config --local user.email "$EMAIL"
           git config --local user.name "cryptoknightsz"
           git add -A
           
@@ -50,4 +52,5 @@ jobs:
         uses: ad-m/github-push-action@v0.6.0
         with:
           directory: "."
+          branch: master
           github_token: ${{ secrets.GITHUB_TOKEN }}
