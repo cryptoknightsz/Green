@@ -5,7 +5,9 @@ on:
     branches:
       - master
   schedule:
-    - cron: "1 * * * *"
+    - cron: "1 * * * *"  # Runs every hour at the first minute
+  # Allowing manual trigger from Actions tab
+  workflow_dispatch:
 
 jobs:
   auto_commit:
@@ -27,6 +29,13 @@ jobs:
           d=$(date '+%Y-%m-%dT%H:%M:%SZ')
           echo $d > LAST_UPDATED
 
+      - name: Wait for random time
+        run: |
+          # Generate a random number of minutes (between 10 to 60 minutes) to wait before committing
+          RANDOM_MINUTE=$(( (RANDOM % 51) + 10 ))  # Random time between 10 and 60 minutes
+          echo "Waiting for $RANDOM_MINUTE minute(s) before committing..."
+          sleep $((RANDOM_MINUTE * 60))  # Convert to seconds
+
       - name: Commit changes
         env:
           EMAIL: ${{ secrets.USER_EMAIL }}
@@ -35,6 +44,7 @@ jobs:
           git config --local user.name "cryptoknightsz"
           git add -A
 
+          # Array of random commit messages
           arr[0]="chore(bot): 😂 auto commit"
           arr[1]="chore(bot): 😱 auto commit"
           arr[2]="chore(bot): 👿 auto commit"
